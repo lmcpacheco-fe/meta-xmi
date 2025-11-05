@@ -44,14 +44,16 @@
         regulator-min-microvolt = <1800000>;
         regulator-max-microvolt = <1800000>;
         regulator-always-on;
+		startup-delay-us = <5000>;
     };
 
-    reg_cam_dvdd_1v5: regulator-cam-dvdd { // This is actually 1.1V on the board, but driver expects 1.5V
+    reg_cam_dvdd_1v1: regulator-cam-dvdd { // This is actually 1.1V on the board, but driver expects 1.5V
         compatible = "regulator-fixed";
-        regulator-name = "cam_dvdd_1v5";
-        regulator-min-microvolt = <1500000>;
-        regulator-max-microvolt = <1500000>;
+        regulator-name = "cam_dvdd_1v1";
+        regulator-min-microvolt = <1100000>;
+        regulator-max-microvolt = <1100000>;
         regulator-always-on;
+		startup-delay-us = <10000>;
     };
 
 	ext_osc_24m: ext-osc-24m {
@@ -586,7 +588,7 @@
 		clocks = <&ext_osc_27m>;
 		clock-names = "csi_mclk";
 		csi_id = <0x00>;
-		pwn-gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
+		// pwn-gpios = <&gpio4 5 GPIO_ACTIVE_HIGH>;
 		rst-gpios = <&gpio4 0 GPIO_ACTIVE_LOW>;
 		mclk = <27000000>;
 		mclk_source = <0>;
@@ -594,7 +596,7 @@
 		status = "okay";
 
 		AVDD-supply = <&reg_cam_avdd_2v8>;
-        DVDD-supply = <&reg_cam_dvdd_1v5>;
+        DVDD-supply = <&reg_cam_dvdd_1v1>;
         DOVDD-supply = <&reg_cam_dovdd_1v8>;
 
 		port@0 {
@@ -602,7 +604,7 @@
 				remote-endpoint = <&mipi_csi0_ep>;
 				data-lanes = <1 2 3 4>;
 				clock-lanes = <0>;
-				max-pixel-frequency = /bits/ 64 <266000000>; /* Placeholder value basing off other EVKs */
+				max-pixel-frequency = /bits/ 64 <500000000>; /* Placeholder value basing off other EVKs */
 			};
 		};
 	};
@@ -654,35 +656,35 @@
 	pinctrl-0 = <&pinctrl_i2c4>;
 	status = "okay";
 
-	ar0830_1: ar0830_mipi@36 {
-		compatible = "onsemi,ar0830";
-		reg = <0x36>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_csi1_pwn>, <&pinctrl_csi1_rst>;
-		clocks = <&ext_osc_27m>;
-		clock-names = "csi_mclk";
-		csi_id = <0x01>;
-		pwn-gpios = <&gpio4 12 GPIO_ACTIVE_HIGH>;
-		rst-gpios = <&gpio4 13 GPIO_ACTIVE_LOW>;
-		mclk = <27000000>;
-		mclk_source = <0>;
-		status = "okay";
+	// ar0830_1: ar0830_mipi@36 {
+	// 	compatible = "onsemi,ar0830";
+	// 	reg = <0x36>;
+	// 	pinctrl-names = "default";
+	// 	pinctrl-0 = <&pinctrl_csi1_pwn>, <&pinctrl_csi1_rst>;
+	// 	clocks = <&ext_osc_27m>;
+	// 	clock-names = "csi_mclk";
+	// 	csi_id = <0x01>;
+	// 	pwn-gpios = <&gpio4 12 GPIO_ACTIVE_HIGH>;
+	// 	rst-gpios = <&gpio4 13 GPIO_ACTIVE_LOW>;
+	// 	mclk = <27000000>;
+	// 	mclk_source = <0>;
+	// 	status = "disabled";
 
-		AVDD-supply = <&reg_cam_avdd_2v8>;
-        DVDD-supply = <&reg_cam_dvdd_1v5>;
-        DOVDD-supply = <&reg_cam_dovdd_1v8>;
+	// 	AVDD-supply = <&reg_cam_avdd_2v8>;
+    //     DVDD-supply = <&reg_cam_dvdd_1v1>;
+    //     DOVDD-supply = <&reg_cam_dovdd_1v8>;
 
-		pinctrl-assert-gpios = <&gpio3 19 GPIO_ACTIVE_LOW>;
+	// 	pinctrl-assert-gpios = <&gpio3 19 GPIO_ACTIVE_LOW>; /* MIPI_SEL_1V8 used to select between camera 3 and 4 */
 
-		port {
-			ar0830_mipi_1_ep: endpoint {
-				remote-endpoint = <&mipi_csi1_ep>;
-				data-lanes = <1 2 3 4>;
-				clock-lanes = <0>;
-				max-pixel-frequency = /bits/ 64 <266000000>; /* Placeholder value basing off other EVKs */
-			};
-		};
-	};
+	// 	port {
+	// 		ar0830_mipi_1_ep: endpoint {
+	// 			remote-endpoint = <&mipi_csi1_ep>;
+	// 			data-lanes = <1 2 3 4>;
+	// 			clock-lanes = <0>;
+	// 			max-pixel-frequency = /bits/ 64 <500000000>; /* Placeholder value basing off other EVKs */
+	// 		};
+	// 	};
+	// };
 };
 
 //MIPI-DSI interface
@@ -1282,9 +1284,9 @@
 	#size-cells = <0>;
 	status = "okay";
 
-	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_CAM1_PIX>;
-	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
-	assigned-clock-rates = <400000000>;
+	// assigned-clocks = <&clk IMX8MP_CLK_MEDIA_CAM1_PIX>;
+	// assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
+	// assigned-clock-rates = <400000000>;
 
 	port {
 		mipi_csi0_ep: endpoint {
@@ -1299,27 +1301,27 @@
 
 // Camera
 &mipi_csi_1 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	status = "okay";
+	// #address-cells = <1>;
+	// #size-cells = <0>;
+	status = "disabled";
 
 	// TODO: see if these are actually used correctly
-	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_CAM1_PIX>;
-	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
-	assigned-clock-rates = <400000000>;
+	// assigned-clocks = <&clk IMX8MP_CLK_MEDIA_CAM1_PIX>;
+	// assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
+	// assigned-clock-rates = <400000000>;
 
-	port@1 {
-		reg = <1>;
+	// port@1 {
+	// 	reg = <1>;
 
-		mipi_csi1_ep: endpoint {
-			remote-endpoint = <&ar0830_mipi_1_ep>;
-			data-lanes = <4>;
-			csis-hs-settle = <23>;
-			csis-clk-settle = <2>;
-			csis-wclk;
-		};
+	// 	mipi_csi1_ep: endpoint {
+	// 		remote-endpoint = <&ar0830_mipi_1_ep>;
+	// 		data-lanes = <4>;
+	// 		csis-hs-settle = <23>;
+	// 		csis-clk-settle = <2>;
+	// 		csis-wclk;
+	// 	};
 
-	};
+	// };
 };
 
 &cameradev {
@@ -1327,9 +1329,9 @@
 };
 
 &isi_0 {
-	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_AXI_ROOT>,
-			  <&clk IMX8MP_CLK_MEDIA_APB_ROOT>;
-	assigned-clock-rates = <400000000>, <200000000>;
+	// assigned-clocks = <&clk IMX8MP_CLK_MEDIA_AXI_ROOT>,
+	// 		  <&clk IMX8MP_CLK_MEDIA_APB_ROOT>;
+	// assigned-clock-rates = <400000000>, <200000000>;
 	status = "okay";
 
 	cap_device {
@@ -1342,28 +1344,28 @@
 };
 
 &isi_1 {
-	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_AXI_ROOT>,
-			  <&clk IMX8MP_CLK_MEDIA_APB_ROOT>;
-	assigned-clock-rates = <400000000>, <200000000>;
+	// assigned-clocks = <&clk IMX8MP_CLK_MEDIA_AXI_ROOT>,
+	// 		  <&clk IMX8MP_CLK_MEDIA_APB_ROOT>;
+	// assigned-clock-rates = <400000000>, <200000000>;
 	status = "disabled";
 
-	cap_device {
-		status = "okay";
-	};
+	// cap_device {
+	// 	status = "okay";
+	// };
 };
 
 &isp_0 {
 	status = "okay";
-	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_ISP>;
-	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
-	assigned-clock-rates = <400000000>;
+	// assigned-clocks = <&clk IMX8MP_CLK_MEDIA_ISP>;
+	// assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
+	// assigned-clock-rates = <400000000>;
 };
 
 &isp_1 {
-	status = "okay";
-	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_ISP>;
-	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
-	assigned-clock-rates = <400000000>;
+	status = "disabled";
+	// assigned-clocks = <&clk IMX8MP_CLK_MEDIA_ISP>;
+	// assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
+	// assigned-clock-rates = <400000000>;
 };
 
 &dewarp {
