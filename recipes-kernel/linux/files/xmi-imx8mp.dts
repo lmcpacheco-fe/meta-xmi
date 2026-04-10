@@ -769,8 +769,7 @@
 };
 
 
-&uart2 {
-	/* console */
+&uart2 {/* Shell */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart2>;
 	status = "okay";
